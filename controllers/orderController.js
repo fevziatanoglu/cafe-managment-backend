@@ -1,7 +1,6 @@
 import Order from '../models/Order.js';
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
 
-// Sipariş oluştur
 export const createOrder = async (req, res) => {
     try {
         const { tableId, items, total } = req.body;
@@ -14,11 +13,9 @@ export const createOrder = async (req, res) => {
     }
 };
 
-// Sipariş güncelle (durum veya ürünler)
 export const updateOrder = async (req, res) => {
     try {
-        const adminId = req.user._id || req.user._id;
-        const { status, items, total } = req.body;
+        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId; const { status, items, total } = req.body;
         const order = await Order.findOneAndUpdate(
             { _id: req.params.id, adminId },
             { $set: { status, items, total } },
@@ -33,11 +30,9 @@ export const updateOrder = async (req, res) => {
     }
 };
 
-// Sipariş sil
 export const deleteOrder = async (req, res) => {
     try {
-        const adminId = req.user._id || req.user._id;
-        const order = await Order.findOneAndDelete({ _id: req.params.id, adminId });
+        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId; const order = await Order.findOneAndDelete({ _id: req.params.id, adminId });
         if (!order) {
             return sendError(res, 'Order not found', {}, 404);
         }
@@ -47,10 +42,9 @@ export const deleteOrder = async (req, res) => {
     }
 };
 
-// Tüm siparişleri getir (adminin siparişleri)
 export const getOrders = async (req, res) => {
     try {
-        const adminId = req.user._id || req.user._id;
+        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId; 
         const orders = await Order.find({ adminId });
         return sendSuccess(res, 'Orders fetched successfully', orders, 200);
     } catch (error) {
@@ -58,11 +52,9 @@ export const getOrders = async (req, res) => {
     }
 };
 
-// Tek siparişi getir
 export const getOrderById = async (req, res) => {
     try {
-        const adminId = req.user._id || req.user._id;
-        const order = await Order.findOne({ _id: req.params.id, adminId });
+        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId; const order = await Order.findOne({ _id: req.params.id, adminId });
         if (!order) {
             return sendError(res, 'Order not found', {}, 404);
         }
