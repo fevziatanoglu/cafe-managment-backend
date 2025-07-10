@@ -1,15 +1,17 @@
 import User from '../models/User.js';
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
+import bcrypt from 'bcryptjs';
 
 export const createWorker = async (req, res) => {
     try {
         const { username, email, password, role } = req.body;
-        const adminId = req.user._id; // Giriş yapan adminin id'si
+        const adminId = req.user._id; 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return sendError(res, 'Worker email already exists', {}, 400);
         }
-        const user = await User.create({ username, email, password, role, adminId });
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.create({ username, email, password : hashedPassword, role, adminId });
         return sendSuccess(res, 'Worker created successfully', user, 201);
     } catch (error) {
         return sendError(res, 'Error creating worker', error, 500);
