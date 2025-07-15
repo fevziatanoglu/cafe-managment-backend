@@ -71,7 +71,8 @@ export const login = async (req, res) => {
 
 export const refreshAccessToken = async (req, res) => {
     const cookieHeader = req.headers.cookie;
-    const refreshToken = cookieHeader?.split('=')[1];
+    //HERE IS IMPORTANT - YOU NEED TO GET REFRESH TOKEN FROM COOKIE HEADER CORRECTLY
+    const refreshToken = cookieHeader?.split('refreshToken=')[1];
     if (!refreshToken) {
         return res.status(401).json({ message: 'Unauthorize' });
     }
