@@ -5,6 +5,7 @@ import workerRoutes from './routes/workerRoute.js';
 import menuRoutes from './routes/menuRoute.js';
 import productRoutes from './routes/productRoute.js';
 import orderRoutes from './routes/orderRoute.js';
+import tableRoutes from './routes/tableRoute.js';
 import cors from 'cors';
 import connectDB from './utils/connectMongo.js';
 
@@ -22,6 +23,7 @@ app.use('/api/workers', workerRoutes);
 app.use('/api/menus', menuRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/tables' , tableRoutes)
 
 
 const PORT = process.env.PORT || 5001;
