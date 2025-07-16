@@ -3,8 +3,9 @@ import User from '../models/User.js';
 
 export const authenticate = async (req, res, next) => {
     const authHeader = req.headers.authorization || req.headers.bearer;
+    console.log(authHeader)
     if (!authHeader) return res.status(401).json({ message: 'Token not found' });
-    const token = authHeader;
+    const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
         const user = await User.findById(decoded.id);
@@ -12,6 +13,6 @@ export const authenticate = async (req, res, next) => {
         req.user = user;
         next();
     } catch (err) {
-        res.status(401).json({ message: 'Invalid token' , error: err.message });
+        res.status(401).json({ message: 'Invalid token', error: err.message });
     }
 };
