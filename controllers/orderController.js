@@ -32,7 +32,8 @@ export const updateOrder = async (req, res) => {
 
 export const deleteOrder = async (req, res) => {
     try {
-        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId; const order = await Order.findOneAndDelete({ _id: req.params.id, adminId });
+        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId; 
+        const order = await Order.findOneAndDelete({ _id: req.params.id, adminId });
         if (!order) {
             return sendError(res, 'Order not found', {}, 404);
         }

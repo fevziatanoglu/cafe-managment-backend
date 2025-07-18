@@ -89,7 +89,7 @@ export const refreshAccessToken = async (req, res) => {
 
         return sendSuccess(res, 'Access token refreshed', {
             token: newAccessToken,
-            user: { _id: user._id, username: user.username, email: user.email }
+            user: { _id: user._id, username: user.username, email: user.email , adminId: user.adminId }
         }, 200);
 
     } catch (err) {
