@@ -4,7 +4,8 @@ import {
     updateOrder,
     deleteOrder,
     getOrders,
-    getOrderById
+    getOrderById,
+    getPendingOrders
 } from '../controllers/orderController.js';
 import { authenticate } from '../middlewares/authenticate.js';
 
@@ -15,5 +16,6 @@ router.put('/:id', authenticate, updateOrder);
 router.delete('/:id', authenticate, deleteOrder);
 router.get('/', authenticate, getOrders);
 router.get('/:id', authenticate, getOrderById);
+router.get('/pending', authenticate, getPendingOrders);
 
 export default router;

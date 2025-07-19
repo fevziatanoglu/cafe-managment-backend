@@ -32,7 +32,7 @@ export const updateOrder = async (req, res) => {
 
 export const deleteOrder = async (req, res) => {
     try {
-        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId; 
+        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId;
         const order = await Order.findOneAndDelete({ _id: req.params.id, adminId });
         if (!order) {
             return sendError(res, 'Order not found', {}, 404);
@@ -45,7 +45,7 @@ export const deleteOrder = async (req, res) => {
 
 export const getOrders = async (req, res) => {
     try {
-        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId; 
+        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId;
         const orders = await Order.find({ adminId });
         return sendSuccess(res, 'Orders fetched successfully', orders, 200);
     } catch (error) {
@@ -62,5 +62,16 @@ export const getOrderById = async (req, res) => {
         return sendSuccess(res, 'Order fetched successfully', order, 200);
     } catch (error) {
         return sendError(res, 'Error fetching order', error, 500);
+    }
+};
+
+
+export const getPendingOrders = async (req, res) => {
+    try {
+        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId;
+        const orders = await Order.find({ adminId, status: 'pending' });
+        return sendSuccess(res, 'Pending orders fetched successfully', orders, 200);
+    } catch (error) {
+        return sendError(res, 'Error fetching pending orders', error, 500);
     }
 };
