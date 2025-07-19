@@ -1,3 +1,4 @@
+import Order from '../models/Order.js';
 import Table from '../models/Table.js';
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
 
@@ -63,5 +64,28 @@ export const getTableById = async (req, res) => {
         return sendSuccess(res, 'Table fetched successfully', table, 200);
     } catch (error) {
         return sendError(res, 'Error fetching table', error, 500);
+    }
+};
+
+export const getTablesWithActiveOrder = async (req, res) => {
+    try {
+        const adminId = req.user.adminId || req.user._id;
+        const tables = await Table.find({ adminId });
+
+        const tablesWithOrders = await Promise.all(
+            tables.map(async (table) => {
+                const orders = await Order.find({
+                    tableId: table._id,
+                    status: { $in: ['pending', 'preparing', 'served'] }
+                });
+                return {
+                    ...table.toObject(),
+                    orders 
+                };
+            })
+        );
+        return sendSuccess(res, 'Tables with active orders fetched', tablesWithOrders, 200);
+    } catch (error) {
+        return sendError(res, 'Error fetching tables with orders', error, 500);
     }
 };
