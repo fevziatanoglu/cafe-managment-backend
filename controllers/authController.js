@@ -59,7 +59,7 @@ export const login = async (req, res) => {
 
             return sendSuccess(res, 'User logged in successfully', {
                 token: accessToken,
-                user: { _id: user._id, username: user.username, email: user.email }
+                user: { _id: user._id, username: user.username, email: user.email , role: user.role }
             }, 200);
         } else {
             return sendError(res, 'Invalid username or password', {}, 401);
@@ -89,7 +89,7 @@ export const refreshAccessToken = async (req, res) => {
 
         return sendSuccess(res, 'Access token refreshed', {
             token: newAccessToken,
-            user: { _id: user._id, username: user.username, email: user.email , adminId: user.adminId }
+            user: { _id: user._id, username: user.username, email: user.email , adminId: user.adminId , role: user.role }
         }, 200);
 
     } catch (err) {
