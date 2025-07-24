@@ -6,8 +6,7 @@ const productSchema = mongoose.Schema({
   price: { type: Number, required: true },
   category: { type: String },
   isActive: { type: Boolean, default: true },
-  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  menuId: { type: mongoose.Schema.Types.ObjectId, ref: 'Menu', required: true}
+  adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 
 export default mongoose.model('Product', productSchema);

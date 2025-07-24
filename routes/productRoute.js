@@ -4,8 +4,7 @@ import {
     updateProduct,
     deleteProduct,
     getProducts,
-    getProductById,
-    getProductsByMenuId
+    getProductById
 } from '../controllers/productController.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { authorizeRole } from '../middlewares/authorizeRole.js';
@@ -17,6 +16,5 @@ router.put('/:id', authenticate, authorizeRole('admin'), updateProduct);
 router.delete('/:id', authenticate, authorizeRole('admin'), deleteProduct);
 router.get('/', authenticate, authorizeRole('admin'), getProducts);
 router.get('/:id', authenticate, authorizeRole('admin'), getProductById);
-router.get('/menu/:menuId', authenticate, authorizeRole('admin'), getProductsByMenuId);
 
 export default router;

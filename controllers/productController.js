@@ -3,9 +3,9 @@ import { sendSuccess, sendError } from '../utils/responseHandler.js';
 
 export const createProduct = async (req, res) => {
     try {
-        const { name, description, price, category, menuId } = req.body;
+        const { name, description, price, category } = req.body;
         const adminId = req.user._id;
-        const product = await Product.create({ name, description, price, category, menuId, adminId });
+        const product = await Product.create({ name, description, price, category, adminId });
         return sendSuccess(res, 'Product created successfully', product, 201);
     } catch (error) {
         return sendError(res, 'Error creating product', error, 500);
@@ -15,10 +15,10 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
     try {
         const adminId = req.user._id;
-        const { name, description, price, category, isActive, menuId } = req.body;
+        const { name, description, price, category, isActive } = req.body;
         const product = await Product.findOneAndUpdate(
             { _id: req.params.id, adminId },
-            { $set: { name, description, price, category, isActive, menuId } },
+            { $set: { name, description, price, category, isActive } },
             { new: true }
         );
         if (!product) {
@@ -64,13 +64,3 @@ export const getProductById = async (req, res) => {
         return sendError(res, 'Error fetching product', error, 500);
     }
 };
-
-export const getProductsByMenuId = async (req, res) => {
-    try {
-        const { menuId } = req.params;
-        const products = await Product.find({ menuId });
-        return sendSuccess(res, 'Products fetched successfully', products, 200);
-    } catch (error) {
-        return sendError(res, 'Error fetching products by menu ID', error, 500);
-    }
-}
