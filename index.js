@@ -7,7 +7,8 @@ import productRoutes from './routes/productRoute.js';
 import orderRoutes from './routes/orderRoute.js';
 import tableRoutes from './routes/tableRoute.js';
 import cors from 'cors';
-import connectDB from './utils/connectMongo.js';
+import connectDB from './config/connectMongo.js';
+import cloudinary from './config/cloudinary.js';
 
 dotenv.config();
 connectDB();
