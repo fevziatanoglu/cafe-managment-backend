@@ -4,9 +4,9 @@ import cloudinary from '../config/cloudinary.js';
 
 export const createProduct = async (req, res) => {
     try {
-        const { name, description, price, category } = req.body;
+        const { name, description, price, category, image } = req.body;
         const adminId = req.user._id;
-        let image = null;
+        let imageUrl = null;
 
         if (req.file) {
             const result = await new Promise((resolve, reject) => {
@@ -19,10 +19,12 @@ export const createProduct = async (req, res) => {
                 );
                 stream.end(req.file.buffer);
             });
-            image = result.secure_url;
+            imageUrl = result.secure_url;
+        } else if (image && typeof image === "string") {
+            imageUrl = image;
         }
 
-        const product = await Product.create({ name, description, price, category, image, adminId });
+        const product = await Product.create({ name, description, price, category, image: imageUrl, adminId });
         return sendSuccess(res, 'Product created successfully', product, 201);
     } catch (error) {
         return sendError(res, 'Error creating product', error?.message || error, 500);
@@ -32,8 +34,8 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
     try {
         const adminId = req.user._id;
-        const { name, description, price, category, isActive } = req.body;
-        let image = null;
+        const { name, description, price, category, isActive, image } = req.body;
+        let imageUrl = null;
 
         if (req.file) {
             const result = await new Promise((resolve, reject) => {
@@ -46,12 +48,14 @@ export const updateProduct = async (req, res) => {
                 );
                 stream.end(req.file.buffer);
             });
-            image = result.secure_url;
+            imageUrl = result.secure_url;
+        } else if (image && typeof image === "string") {
+            imageUrl = image;
         }
 
         const updateFields = { name, description, price, category, isActive };
-        if (image) {
-            updateFields.image = image;
+        if (imageUrl) {
+            updateFields.image = imageUrl;
         }
 
         const product = await Product.findOneAndUpdate(
