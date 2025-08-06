@@ -1,4 +1,4 @@
-import Staff from '../models/Staff.js';
+import User from '../models/User.js';
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
 import cloudinary from '../config/cloudinary.js';
 
@@ -7,7 +7,6 @@ export const createStaff = async (req, res) => {
         const { username, email, role, password, image } = req.body;
         const adminId = req.user._id;
         let imageUrl = null;
-
         if (req.file) {
             const result = await new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
@@ -24,7 +23,7 @@ export const createStaff = async (req, res) => {
             imageUrl = image;
         }
 
-        const staff = await Staff.create({ username, email, role, password, image: imageUrl, adminId });
+        const staff = await User.create({ username, email, role, password, image: imageUrl, adminId });
         return sendSuccess(res, 'Staff created successfully', staff, 201);
     } catch (error) {
         return sendError(res, 'Error creating staff', error?.message || error, 500);
@@ -53,11 +52,12 @@ export const updateStaff = async (req, res) => {
             imageUrl = image;
         }
 
+
         const updateFields = { username, email, role };
         if (password) updateFields.password = password;
         if (imageUrl) updateFields.image = imageUrl;
 
-        const staff = await Staff.findOneAndUpdate(
+        const staff = await User.findOneAndUpdate(
             { _id: req.params.id, adminId },
             { $set: updateFields },
             { new: true }
@@ -69,5 +69,62 @@ export const updateStaff = async (req, res) => {
         return sendSuccess(res, 'Staff updated successfully', staff, 200);
     } catch (error) {
         return sendError(res, 'Error updating staff', error, 500);
+    }
+};
+
+export const getStaff = async (req, res) => {
+    try {
+        const adminId = req.user._id;
+        const staff = await User.find({ adminId, role: { $in: ['waiter', 'kitchen'] } });
+        return sendSuccess(res, 'Staff fetched successfully', staff, 200);
+    } catch (error) {
+        return sendError(res, 'Error fetching staff', error, 500);
+    }
+};
+
+// Get staff by ID
+export const getStaffById = async (req, res) => {
+    try {
+        const adminId = req.user._id;
+        const staff = await User.findOne({ _id: req.params.id, adminId, role: { $in: ['waiter', 'kitchen'] } });
+        if (!staff) {
+            return sendError(res, 'Staff not found', {}, 404);
+        }
+        return sendSuccess(res, 'Staff fetched successfully', staff, 200);
+    } catch (error) {
+        return sendError(res, 'Error fetching staff', error, 500);
+    }
+};
+
+// Get staff by username
+export const getStaffByUsername = async (req, res) => {
+    try {
+        const adminId = req.user._id;
+        const { username } = req.params;
+        const staff = await User.findOne({
+            username,
+            adminId,
+            role: { $in: ['waiter', 'kitchen'] }
+        });
+        if (!staff) {
+            return sendError(res, 'Staff not found', {}, 404);
+        }
+        return sendSuccess(res, 'Staff fetched successfully', staff, 200);
+    } catch (error) {
+        return sendError(res, 'Error fetching staff', error, 500);
+    }
+};
+
+// Delete staff
+export const deleteStaff = async (req, res) => {
+    try {
+        const adminId = req.user._id;
+        const staff = await User.findOneAndDelete({ _id: req.params.id, adminId, role: { $in: ['waiter', 'kitchen'] } });
+        if (!staff) {
+            return sendError(res, 'Staff not found', {}, 404);
+        }
+        return sendSuccess(res, 'Staff deleted successfully', staff, 200);
+    } catch (error) {
+        return sendError(res, 'Error deleting staff', error, 500);
     }
 };
