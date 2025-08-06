@@ -10,6 +10,7 @@ const userSchema = mongoose.Schema({
     enum: ['admin', 'waiter', 'kitchen'] , default: 'admin', 
     required: true 
   },
+  image: { type: String, default: null },
   adminId: { 
     type: mongoose.Schema.Types.ObjectId, 
     ref: 'User',
