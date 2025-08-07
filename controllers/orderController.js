@@ -1,5 +1,6 @@
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
+import Table from '../models/Table.js';
 
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
 
@@ -40,6 +41,9 @@ export const createOrder = async (req, res) => {
             createdBy,
             adminId
         });
+
+        await Table.findByIdAndUpdate(tableId, { status: 'occupied' });
+
         return sendSuccess(res, 'Order created successfully', order, 201);
     } catch (error) {
         return sendError(res, 'Error creating order', error, 500);
@@ -145,3 +149,13 @@ export const getPendingOrders = async (req, res) => {
         return sendError(res, 'Error fetching pending orders', error, 500);
     }
 };
+
+export const getOrdersByTableId = async (req, res) => {
+    try {
+        const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId;
+        const orders = await Order.find({ tableId: req.params.tableId, adminId });
+        return sendSuccess(res, 'Orders for table fetched successfully', orders, 200);
+    } catch (error) {
+        return sendError(res, 'Error fetching orders for table', error, 500);
+    }
+}
