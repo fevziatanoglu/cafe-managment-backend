@@ -13,7 +13,6 @@ const orderSchema = mongoose.Schema({
   }],
   status: { type: String, enum: ['pending', 'preparing', 'served', 'paid'], default: 'pending' },
   total: { type: Number },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
 
