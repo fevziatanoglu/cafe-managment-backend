@@ -9,7 +9,6 @@ export const createOrder = async (req, res) => {
     try {
         const { tableId, tableName, items } = req.body;
         const adminId = req.user.adminId || req.user._id;
-        const createdBy = req.user._id;
         const waiterId = req.user._id;
         const waiterName = req.user.username;
 
@@ -38,7 +37,6 @@ export const createOrder = async (req, res) => {
             waiterName,
             items: validatedItems,
             total,
-            createdBy,
             adminId
         });
 
@@ -159,3 +157,52 @@ export const getOrdersByTableId = async (req, res) => {
         return sendError(res, 'Error fetching orders for table', error, 500);
     }
 }
+
+export const createPaidOrder = async (req, res) => {
+    try {
+        const { tableId, tableNumber, items } = req.body;
+        const adminId = req.user.adminId || req.user._id;
+        const waiterId = req.user._id;
+        const waiterName = req.user.username;
+
+        let total = 0;
+        const validatedItems = [];
+
+        for (const item of items) {
+            const product = await Product.findById(item.productId);
+            if (!product) {
+                return sendError(res, `Product not found: ${item.productId}`, {}, 404);
+            }
+            const itemTotal = product.price * item.quantity;
+            total += itemTotal;
+            validatedItems.push({
+                productId: item.productId,
+                productName: product.name,
+                price: product.price,
+                quantity: item.quantity
+            });
+        }
+
+        const order = await Order.create({
+            tableId,
+            tableName: tableNumber,
+            waiterId,
+            waiterName,
+            items: validatedItems,
+            total,
+            status: "paid",
+            adminId
+        });
+
+        await Table.findByIdAndUpdate(tableId, { status: 'empty' });
+        await Order.deleteMany({
+            tableId,
+            status: { $ne: "paid" },
+        });
+
+        return sendSuccess(res, 'Paid order created successfully', order, 201);
+    } catch (error) {
+        return sendError(res, 'Error creating paid order', error, 500);
+    }
+};
+
