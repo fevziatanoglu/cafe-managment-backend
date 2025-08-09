@@ -118,7 +118,7 @@ export const deleteOrder = async (req, res) => {
 export const getOrders = async (req, res) => {
     try {
         const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId;
-        const orders = await Order.find({ adminId });
+        const orders = await Order.find({ adminId, status: { $ne: 'paid' } });
         return sendSuccess(res, 'Orders fetched successfully', orders, 200);
     } catch (error) {
         return sendError(res, 'Error fetching orders', error, 500);
@@ -138,13 +138,13 @@ export const getOrderById = async (req, res) => {
     }
 };
 
-export const getPendingOrders = async (req, res) => {
+export const getPaidOrders = async (req, res) => {
     try {
         const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId;
-        const orders = await Order.find({ adminId, status: 'pending' });
-        return sendSuccess(res, 'Pending orders fetched successfully', orders, 200);
+        const orders = await Order.find({ adminId, status: 'paid' });
+        return sendSuccess(res, 'Paid orders fetched successfully', orders, 200);
     } catch (error) {
-        return sendError(res, 'Error fetching pending orders', error, 500);
+        return sendError(res, 'Error fetching paid orders', error, 500);
     }
 };
 

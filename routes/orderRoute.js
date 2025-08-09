@@ -5,19 +5,19 @@ import {
     deleteOrder,
     getOrders,
     getOrderById,
-    getPendingOrders,
-    createPaidOrder
+    createPaidOrder,
+    getPaidOrders
 } from '../controllers/orderController.js';
 import { authenticate } from '../middlewares/authenticate.js';
 
 const router = express.Router();
 
+router.get('/paid', authenticate, getPaidOrders);
 router.post('/', authenticate, createOrder);
 router.put('/:id', authenticate, updateOrder);
 router.delete('/:id', authenticate, deleteOrder);
 router.get('/', authenticate, getOrders);
 router.get('/:id', authenticate, getOrderById);
-router.get('/pending', authenticate, getPendingOrders);
-router.post('/paid', authenticate, createPaidOrder);
+router.post('/pay', authenticate, createPaidOrder);
 
 export default router;
