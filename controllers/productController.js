@@ -1,6 +1,7 @@
 import Product from '../models/Product.js';
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
 import cloudinary from '../config/cloudinary.js';
+import Cafe from '../models/Cafe.js';
 
 export const createProduct = async (req, res) => {
     try {
@@ -93,6 +94,26 @@ export const getProducts = async (req, res) => {
         return sendSuccess(res, 'Products fetched successfully', products, 200);
     } catch (error) {
         return sendError(res, 'Error fetching products', error, 500);
+    }
+};
+
+export const getProductsBySlug = async (req, res) => {
+    try {
+        const slug = req.params.slug;
+        const { category } = req.query;
+        const cafe = await Cafe.findOne({ slug: slug });
+        if (!cafe) {
+            return sendError(res, 'Cafe not found', {}, 404);
+        }
+        const filter = { adminId: cafe.owner };
+        if (category) {
+            filter.category = category;
+        }
+        const products = await Product.find(filter);
+        console.log('products:', products);
+        return sendSuccess(res, 'Products fetched successfully', products, 200);
+    } catch (error) {
+        return sendError(res, error.message || 'Error fetching products', error, error.status || 500);
     }
 };
 

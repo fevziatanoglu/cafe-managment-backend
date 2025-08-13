@@ -5,7 +5,10 @@ const productSchema = mongoose.Schema({
   description: { type: String },
   price: { type: Number, required: true },
   image: { type: String },
-  category: { type: String },
+  category: { 
+    type: String, 
+    enum: ['hot drink', 'cold drink', 'dessert', 'food'], 
+  },
   isActive: { type: Boolean, default: true },
   adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }, { timestamps: true });
