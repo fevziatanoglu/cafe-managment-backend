@@ -110,7 +110,12 @@ export const getProductsBySlug = async (req, res) => {
             filter.category = category;
         }
         const products = await Product.find(filter);
-        return sendSuccess(res, 'Products fetched successfully', products, 200);
+        return sendSuccess(
+            res,
+            'Products fetched successfully',
+            { products, cafe: { name: cafe.name, image: cafe.image } },
+            200
+        );
     } catch (error) {
         return sendError(res, error.message || 'Error fetching products', error, error.status || 500);
     }
