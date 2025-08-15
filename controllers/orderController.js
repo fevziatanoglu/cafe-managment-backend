@@ -3,6 +3,7 @@ import Product from '../models/Product.js';
 import Table from '../models/Table.js';
 
 import { sendSuccess, sendError } from '../utils/responseHandler.js';
+import { updateDailyReport } from './dailyReportController.js';
 
 
 export const createOrder = async (req, res) => {
@@ -199,6 +200,14 @@ export const createPaidOrder = async (req, res) => {
             tableId,
             status: { $ne: "paid" },
         });
+
+        // Update daily report
+        try {
+            await updateDailyReport(adminId, total, validatedItems);
+        } catch (reportError) {
+            console.error('Error updating daily report:', reportError);
+            // Don't fail the order creation if report update fails
+        }
 
         return sendSuccess(res, 'Paid order created successfully', order, 201);
     } catch (error) {
