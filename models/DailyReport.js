@@ -7,8 +7,8 @@ const dailyReportSchema = new mongoose.Schema({
     totalCustomers: { type: Number, required: true },
     items: [{
         productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
-        productName: { type: String, required: true },
-        price: { type: Number, required: true },
+        productName: { type: String },
+        price: { type: Number },
         quantity: { type: Number, required: true, default: 1 }
     }
     ],

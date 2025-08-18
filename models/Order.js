@@ -7,8 +7,8 @@ const orderSchema = mongoose.Schema({
   waiterName: { type: String, required: true },
   items: [{
     productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-    productName: { type: String, required: true },
-    price: { type: Number, required: true },
+    productName: { type: String},
+    price: { type: Number},
     quantity: { type: Number, required: true, default: 1 }
   }],
   status: { type: String, enum: ['pending', 'preparing', 'served', 'paid'], default: 'pending' },

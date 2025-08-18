@@ -83,10 +83,11 @@ export const getDailyReports = async (req, res) => {
 // Get today's report
 export const getTodayReport = async (req, res) => {
   try {
-    const adminId = req.user.role === 'admin' ? req.user._id : req.user.adminId;
+    const adminId =  req.user._id
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    
     const report = await DailyReport.findOne({
       date: today,
       adminId
